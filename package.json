@@ -37,6 +37,10 @@
   "engines": {
     "node": ">=6.0.0"
   },
+  "files": [
+    "bin",
+    "dist"
+  ],
   "dependencies": {
     "commander": "~2.20.0",
     "glob": "~7.1.4",
