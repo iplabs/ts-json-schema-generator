@@ -30,6 +30,7 @@
     ],
     "include": [
         "./src/**/*.ts",
+        "./sandbox/**/*.ts",
         "./factory/**/*.ts",
         "./test/**.ts"
     ],
