@@ -19,6 +19,7 @@ export function typeName(value: RawType): RawTypeName {
     } else if (type === "object") {
         return "object";
     } else {
-        return "any";
+        // TODO What happened to "any"? Is it even possible to get here? Maybe throw an exception here?
+        return "null";
     }
 }

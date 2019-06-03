@@ -1,4 +1,4 @@
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import { isArray } from "util";
 import { Definition } from "../Schema/Definition";
 import { SubTypeFormatter } from "../SubTypeFormatter";
