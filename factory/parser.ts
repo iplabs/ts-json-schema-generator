@@ -12,12 +12,11 @@ import { ArrayNodeParser } from "../src/NodeParser/ArrayNodeParser";
 import { BooleanLiteralNodeParser } from "../src/NodeParser/BooleanLiteralNodeParser";
 import { BooleanTypeNodeParser } from "../src/NodeParser/BooleanTypeNodeParser";
 import { CallExpressionParser } from "../src/NodeParser/CallExpressionParser";
-import { ClassNodeParser } from "../src/NodeParser/ClassNodeParser";
 import { ConditionalTypeNodeParser } from "../src/NodeParser/ConditionalTypeNodeParser";
 import { EnumNodeParser } from "../src/NodeParser/EnumNodeParser";
 import { ExpressionWithTypeArgumentsNodeParser } from "../src/NodeParser/ExpressionWithTypeArgumentsNodeParser";
 import { IndexedAccessTypeNodeParser } from "../src/NodeParser/IndexedAccessTypeNodeParser";
-import { InterfaceNodeParser } from "../src/NodeParser/InterfaceNodeParser";
+import { InterfaceAndClassNodeParser } from "../src/NodeParser/InterfaceAndClassNodeParser";
 import { IntersectionNodeParser } from "../src/NodeParser/IntersectionNodeParser";
 import { LiteralNodeParser } from "../src/NodeParser/LiteralNodeParser";
 import { MappedTypeNodeParser } from "../src/NodeParser/MappedTypeNodeParser";
@@ -106,10 +105,7 @@ export function createParser(program: ts.Program, config: Config): NodeParser {
             new TypeAliasNodeParser(typeChecker, chainNodeParser)))))
         .addNodeParser(withExpose(withJsDoc(new EnumNodeParser(typeChecker))))
         .addNodeParser(withCircular(withExpose(withJsDoc(
-            new InterfaceNodeParser(typeChecker, withJsDoc(chainNodeParser)),
-        ))))
-        .addNodeParser(withCircular(withExpose(withJsDoc(
-            new ClassNodeParser(typeChecker, withJsDoc(chainNodeParser)),
+            new InterfaceAndClassNodeParser(typeChecker, withJsDoc(chainNodeParser)),
         ))))
         .addNodeParser(withCircular(withExpose(withJsDoc(
             new TypeLiteralNodeParser(withJsDoc(chainNodeParser)),
