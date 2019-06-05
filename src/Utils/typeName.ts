@@ -19,7 +19,6 @@ export function typeName(value: RawType): RawTypeName {
     } else if (type === "object") {
         return "object";
     } else {
-        // TODO What happened to "any"? Is it even possible to get here? Maybe throw an exception here?
-        return "null";
+        throw new Error(`JavaScript type "${type}" can't be converted to JSON type name`);
     }
 }
