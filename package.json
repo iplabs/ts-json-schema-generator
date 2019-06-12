@@ -1,6 +1,6 @@
 {
   "name": "@iplabs/ts-json-schema-generator",
-  "version": "0.46.0-iplabs.2",
+  "version": "0.46.0-iplabs.3",
   "description": "Generate JSON schema from your Typescript sources",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
