@@ -3,7 +3,6 @@ import { SubTypeFormatter } from "../SubTypeFormatter";
 import { BaseType } from "../Type/BaseType";
 import { DefinitionType } from "../Type/DefinitionType";
 import { IntersectionType } from "../Type/IntersectionType";
-import { ObjectType } from "../Type/ObjectType";
 import { TypeFormatter } from "../TypeFormatter";
 import { getAllOfDefinitionReducer } from "../Utils/allOfDefinition";
 
