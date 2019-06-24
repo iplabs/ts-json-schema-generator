@@ -1,5 +1,5 @@
 import * as Ajv from "ajv";
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
 import { resolve } from "path";
 import * as ts from "typescript";
 import { createFormatter } from "../factory/formatter";
@@ -29,7 +29,7 @@ function assertSchema(name: string, type: string, jsDoc: Config["jsDoc"] = "none
         const generator: SchemaGenerator = new SchemaGenerator(
             program,
             createParser(program, config),
-            createFormatter(config),
+            createFormatter(),
         );
 
         const schema = generator.createSchema(type);
@@ -120,10 +120,13 @@ describe("valid-data", () => {
 
     it("type-indexed-access-tuple-1", assertSchema("type-indexed-access-tuple-1", "MyType"));
     it("type-indexed-access-tuple-2", assertSchema("type-indexed-access-tuple-2", "MyType"));
+    it("type-indexed-access-tuple-union", assertSchema("type-indexed-access-tuple-union", "FormLayout"));
     it("type-indexed-access-object-1", assertSchema("type-indexed-access-object-1", "MyType"));
     it("type-indexed-access-object-2", assertSchema("type-indexed-access-object-2", "MyType"));
+    it("type-indexed-access-keyof", assertSchema("type-indexed-access-keyof", "MyType"));
     it("type-keyof-tuple", assertSchema("type-keyof-tuple", "MyType"));
     it("type-keyof-object", assertSchema("type-keyof-object", "MyType"));
+    it("type-keyof-object-function", assertSchema("type-keyof-object-function", "MyType"));
     it("type-mapped-simple", assertSchema("type-mapped-simple", "MyObject"));
     it("type-mapped-index", assertSchema("type-mapped-index", "MyObject"));
     it("type-mapped-literal", assertSchema("type-mapped-literal", "MyObject"));
@@ -171,4 +174,5 @@ describe("valid-data", () => {
     it("type-conditional-exclude-complex", assertSchema("type-conditional-exclude-complex", "BaseAxisNoSignals"));
     it("type-conditional-exclude-narrowing", assertSchema("type-conditional-exclude-narrowing", "MyObject"));
     it("type-conditional-omit", assertSchema("type-conditional-omit", "MyObject"));
+    it("type-conditional-jsdoc", assertSchema("type-conditional-jsdoc", "MyObject", "extended"));
 });

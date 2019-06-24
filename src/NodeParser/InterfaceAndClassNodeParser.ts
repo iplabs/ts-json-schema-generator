@@ -5,7 +5,8 @@ import { ArrayType } from "../Type/ArrayType";
 import { BaseType } from "../Type/BaseType";
 import { ObjectProperty, ObjectType } from "../Type/ObjectType";
 import { ReferenceType } from "../Type/ReferenceType";
-import { isHidden } from "../Utils/isHidden";
+import { isNodeHidden } from "../Utils/isHidden";
+import { isPublic, isStatic } from "../Utils/modifiers";
 import { getKey } from "../Utils/nodeKey";
 
 export class InterfaceAndClassNodeParser implements SubNodeParser {
@@ -19,8 +20,8 @@ export class InterfaceAndClassNodeParser implements SubNodeParser {
         return node.kind === ts.SyntaxKind.InterfaceDeclaration || node.kind === ts.SyntaxKind.ClassDeclaration;
     }
 
-    public createType(node: ts.InterfaceDeclaration | ts.ClassDeclaration, context: Context,
-            reference?: ReferenceType): BaseType {
+    public createType(node: ts.InterfaceDeclaration | ts.ClassDeclaration, context: Context, reference?: ReferenceType):
+    BaseType {
         if (node.typeParameters && node.typeParameters.length) {
             node.typeParameters.forEach((typeParam) => {
                 const nameSymbol = this.typeChecker.getSymbolAtLocation(typeParam.name)!;
@@ -94,35 +95,26 @@ export class InterfaceAndClassNodeParser implements SubNodeParser {
     }
 
     private getProperties(node: ts.InterfaceDeclaration | ts.ClassDeclaration, context: Context): ObjectProperty[] {
-        function isProperty(member: ts.Node): member is (ts.PropertyDeclaration | ts.PropertySignature) {
-            return ts.isPropertySignature(member) || ts.isPropertyDeclaration(member);
-        }
-        return (<ts.NodeArray<ts.NamedDeclaration>>node.members)
-            .filter(isProperty)
-            .filter(prop => !prop.modifiers || !prop.modifiers.some(modifier =>
-                modifier.kind === ts.SyntaxKind.PrivateKeyword ||
-                modifier.kind === ts.SyntaxKind.ProtectedKeyword ||
-                modifier.kind === ts.SyntaxKind.StaticKeyword))
-            .reduce((result: ObjectProperty[], propertyNode) => {
-                const propertySymbol: ts.Symbol = (propertyNode as any).symbol;
-                const propertyType = propertyNode.type;
-                if (!propertyType || isHidden(propertySymbol)) {
-                    return result;
-                }
-                const objectProperty: ObjectProperty = new ObjectProperty(
-                    propertySymbol.getName(),
-                    this.childNodeParser.createType(propertyType, context),
-                    !propertyNode.questionToken,
-                );
-
-                result.push(objectProperty);
-                return result;
-            }, []);
+        return (node.members as ts.NodeArray<ts.TypeElement | ts.ClassElement>)
+            .reduce(
+                (members, member) => {
+                    if (ts.isConstructorDeclaration(member)) {
+                        members.push(...member.parameters.filter(ts.isParameterPropertyDeclaration));
+                    } else if (ts.isPropertySignature(member) || ts.isPropertyDeclaration(member)) {
+                        members.push(member);
+                    }
+                    return members;
+                }, [] as (ts.PropertyDeclaration | ts.PropertySignature | ts.ParameterPropertyDeclaration)[])
+            .filter(member => isPublic(member) && !isStatic(member) && member.type && !isNodeHidden(member))
+            .map(member => new ObjectProperty(
+                member.name.getText(),
+                this.childNodeParser.createType(member.type!, context),
+                !member.questionToken));
     }
 
     private getAdditionalProperties(node: ts.InterfaceDeclaration | ts.ClassDeclaration, context: Context):
-            BaseType | false {
-        const indexSignature = (<ts.NodeArray<ts.NamedDeclaration>>node.members).find(ts.isIndexSignatureDeclaration);
+    BaseType | false {
+        const indexSignature = (node.members as ts.NodeArray<ts.NamedDeclaration>).find(ts.isIndexSignatureDeclaration);
         if (!indexSignature) {
             return false;
         }

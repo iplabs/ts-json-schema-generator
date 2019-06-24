@@ -3,7 +3,7 @@ import { AnnotationsReader } from "../AnnotationsReader";
 import { ExtendedAnnotationsReader } from "../AnnotationsReader/ExtendedAnnotationsReader";
 import { Context } from "../NodeParser";
 import { SubNodeParser } from "../SubNodeParser";
-import { AnnotatedType, Annotations } from "../Type/AnnotatedType";
+import { AnnotatedType } from "../Type/AnnotatedType";
 import { BaseType } from "../Type/BaseType";
 import { ReferenceType } from "../Type/ReferenceType";
 
@@ -20,6 +20,9 @@ export class AnnotatedNodeParser implements SubNodeParser {
 
     public createType(node: ts.Node, context: Context, reference?: ReferenceType): BaseType {
         const baseType = this.childNodeParser.createType(node, context, reference);
+        if (node.getSourceFile().fileName.match(/[/\\]typescript[/\\]lib[/\\]lib\.[^/\\]+\.d\.ts$/i)) {
+            return baseType;
+        }
         const annotatedNode = this.getAnnotatedNode(node);
         const annotations = this.annotationsReader.getAnnotations(annotatedNode);
         const nullable = this.annotationsReader instanceof ExtendedAnnotationsReader ?
@@ -35,6 +38,8 @@ export class AnnotatedNodeParser implements SubNodeParser {
         } else if (node.parent.kind === ts.SyntaxKind.PropertyDeclaration) {
             return node.parent;
         } else if (node.parent.kind === ts.SyntaxKind.IndexSignature) {
+            return node.parent;
+        } else if (node.parent.kind === ts.SyntaxKind.Parameter) {
             return node.parent;
         } else {
             return node;
