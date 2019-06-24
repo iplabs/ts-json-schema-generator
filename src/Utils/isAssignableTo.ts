@@ -141,7 +141,7 @@ export function isAssignableTo(target: BaseType, source: BaseType, insideTypes: 
         const targetMembers = getObjectProperties(target);
         if (targetMembers.length === 0) {
             // When target object is empty then anything except null and undefined can be assigned to it
-            return !isAssignableTo(new UnionType([new UndefinedType(), new NullType()]), source, insideTypes);
+            return !isAssignableTo(new UnionType([ new UndefinedType(), new NullType() ]), source, insideTypes);
         } else if (source instanceof ObjectType) {
             const sourceMembers = getObjectProperties(source);
 

@@ -9,7 +9,7 @@ export class ConditionalTypeNodeParser implements SubNodeParser {
     public constructor(
         private typeChecker: ts.TypeChecker,
         private childNodeParser: NodeParser,
-    ) { }
+    ) {}
 
     public supportsNode(node: ts.ConditionalTypeNode): boolean {
         return node.kind === ts.SyntaxKind.ConditionalType;

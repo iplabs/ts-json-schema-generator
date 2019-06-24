@@ -42,7 +42,7 @@ import { UnionNodeParser } from "../src/NodeParser/UnionNodeParser";
 import { UnknownTypeNodeParser } from "../src/NodeParser/UnknownTypeNodeParser";
 import { SubNodeParser } from "../src/SubNodeParser";
 import { TopRefNodeParser } from "../src/TopRefNodeParser";
-import { FunctionNodeParser } from "../src/NodeParser/FunctionNodeParser";
+import { FunctionNodeParser } from "./../src/NodeParser/FunctionNodeParser";
 
 export function createParser(program: ts.Program, config: Config): NodeParser {
     const typeChecker = program.getTypeChecker();
